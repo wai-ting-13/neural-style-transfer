@@ -1,2 +1,4 @@
-._DS_Store
-images/*
+.DS_Store
+inputs/*
+config/*
+outputs/*
