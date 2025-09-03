@@ -1,4 +1,4 @@
 .DS_Store
-inputs/*
-config/*
-outputs/*
+notebook/inputs/*
+notebook/config/*
+notebook/outputs/*
