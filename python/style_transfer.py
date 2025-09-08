@@ -37,7 +37,7 @@ def style_transfer(
     img_saving_freq : int,
 
     output_path : str
-) -> Tuple[list[float], list[float]]:
+) -> None:
 
     # Clean Output Directory
     if os.path.exists(output_path):
@@ -92,8 +92,6 @@ def style_transfer(
             )
 
         opt.step(closure=closure)
-
-    return (epoch_style_losses, epoch_content_losses)
 
 
 if __name__ == "__main__":
@@ -154,7 +152,7 @@ if __name__ == "__main__":
         input_image = torch.randn(content_image.data.size(), device=device)
 
     # Do it
-    epoch_style_losses, epoch_content_losses = style_transfer(
+    style_transfer(
         # Neural Network
         net,
 
