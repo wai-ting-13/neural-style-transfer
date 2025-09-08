@@ -9,7 +9,7 @@ from models.nst import NSTNetwork
 from utils.const import SMALL_DIM
 
 def prepare_model(
-    dvc,
+    device,
     feature_extractor : nn.Module,
     style_layer_names: list[str],
     content_layer_names: list[str],
@@ -26,7 +26,7 @@ def prepare_model(
     # Disable Gradient and Turn Model to Evaluation Model
     net.requires_grad_(False)
     net.eval()
-    net.to(dvc)
+    net.to(device)
 
     return net
 

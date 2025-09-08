@@ -21,7 +21,7 @@ def style_transfer(
     # neural network
     net : nn.Module,
     # Inputs
-    ip_image : torch.Tensor,
+    input_image : torch.Tensor,
     content_image : torch.Tensor,
     style_image : torch.Tensor,
 
@@ -34,7 +34,7 @@ def style_transfer(
 
     # Transfering Process
     num_epochs : int,
-    saving_freq : int,
+    img_saving_freq : int,
 
     output_path : str
 ) -> Tuple[list[float], list[float]]:
@@ -44,23 +44,23 @@ def style_transfer(
         shutil.rmtree(output_path) # Deletes the directory and all its contents
     os.makedirs(output_path) # Re-creates the empty directory
 
-    ip_image.requires_grad_(True)
+    input_image.requires_grad_(True)
 
-    opt = optim.LBFGS([ip_image], lr=lr)
+    opt = optim.LBFGS([input_image], lr=lr)
 
     epoch_style_losses = []
     epoch_content_losses = []
 
     for curr_epoch in tqdm(range(1, num_epochs+1)):
 
-        ip_image.data.clamp_(0, 1)
+        input_image.data.clamp_(0, 1)
 
         opt.zero_grad()
 
         epoch_style_loss = 0
         epoch_content_loss = 0
 
-        x = ip_image
+        x = input_image
         yc = content_image.detach()
         ys = style_image.detach()
 
@@ -84,8 +84,8 @@ def style_transfer(
         def closure() -> torch.Tensor:
             return total_loss
 
-        if curr_epoch % saving_freq == 0:
-            display_image = ip_image.data.clamp_(0, 1).squeeze(0).cpu().detach()
+        if curr_epoch % img_saving_freq == 0:
+            display_image = input_image.data.clamp_(0, 1).squeeze(0).cpu().detach()
             torchvision.utils.save_image(
                 display_image,
                 f"{output_path}/image_{curr_epoch}.jpg"
@@ -98,8 +98,8 @@ def style_transfer(
 
 if __name__ == "__main__":
     data_dir = os.path.join(os.path.dirname(__file__), 'data')
-    input_dir = os.path.join(data_dir, 'input')
-    output_dir = os.path.join(data_dir, 'output')
+    input_dir = os.path.join(data_dir, 'inputs')
+    output_dir = os.path.join(data_dir, 'outputs')
 
     parser = argparse.ArgumentParser()
 
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Choose Device
-    dvc = torch.device("cpu")
+    device = torch.device("cpu")
     if args.use_gpu and torch.cuda.is_available():
         device = torch.device("cuda")
     elif args.use_gpu and torch.backends.mps.is_available():
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     content_layer_names=["relu_4"]
     use_avgpool=False
     net = prepare_model(
-        dvc,
+        device,
         feature_extractor=feature_extractor,
         style_layer_names=style_layer_names,
         content_layer_names=content_layer_names,
@@ -143,15 +143,15 @@ if __name__ == "__main__":
 
     # Get Style and Content Tensors
     image_dimension = BIG_DIM if torch.cuda.is_available() else SMALL_DIM
-    style_image = image_to_tensor(f"{input_dir}/{args.style_img}", image_dimension).to(dvc).detach()
-    content_image = image_to_tensor(f"{input_dir}/{args.content_img}", image_dimension).to(dvc).detach()
+    style_image = image_to_tensor(f"{input_dir}/{args.style_img}", image_dimension).to(device).detach()
+    content_image = image_to_tensor(f"{input_dir}/{args.content_img}", image_dimension).to(device).detach()
 
     # Get Input Tensor
     if args.init_mode == "content":
         # initialize as the content image
-        ip_image = content_image.clone().to(dvc)
+        input_image = content_image.clone().to(device)
     else:
-        ip_image = torch.randn(content_image.data.size(), device=dvc)
+        input_image = torch.randn(content_image.data.size(), device=device)
 
     # Do it
     epoch_style_losses, epoch_content_losses = style_transfer(
@@ -159,7 +159,7 @@ if __name__ == "__main__":
         net,
 
         # Inputs
-        ip_image,
+        input_image,
         content_image,
         style_image,
 
