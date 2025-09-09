@@ -1,0 +1,12 @@
+name: nst
+channels:
+  - defaults
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytorch
+  - torchvision
+  - tqdm
+  - jupyter
+  - matplotlib
