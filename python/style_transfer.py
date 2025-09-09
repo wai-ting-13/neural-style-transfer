@@ -13,8 +13,8 @@ import torch.optim as optim
 from tqdm import tqdm
 
 from utils.math_utils import gram_matrix
-from utils.common_utils import image_to_tensor, prepare_model
-from utils.const import BIG_DIM, SMALL_DIM
+from utils.common_utils import images_to_tensor, prepare_model
+from utils.const import MAX_IMG_SIZE_BIG, MAX_IMG_SIZE_SML
 
 
 def style_transfer(
@@ -47,9 +47,6 @@ def style_transfer(
     input_image.requires_grad_(True)
 
     opt = optim.LBFGS([input_image], lr=lr)
-
-    epoch_style_losses = []
-    epoch_content_losses = []
 
     for curr_epoch in tqdm(range(1, num_epochs+1)):
 
@@ -120,13 +117,16 @@ if __name__ == "__main__":
 
     # Choose Device
     device = torch.device("cpu")
+    max_img_size = MAX_IMG_SIZE_SML
     if not args.use_gpu:
         print("Using CPU")
     elif args.use_gpu and torch.cuda.is_available():
         device = torch.device("cuda")
+        max_img_size = MAX_IMG_SIZE_BIG
         print("Using CUDA")
     elif args.use_gpu and torch.backends.mps.is_available():
         device = torch.device("mps")
+        max_img_size = MAX_IMG_SIZE_BIG
         print("Using MPS")
     else:
         print("No GPU Detected, using CPU now")
@@ -146,9 +146,16 @@ if __name__ == "__main__":
     )
 
     # Get Style and Content Tensors
-    image_dimension = BIG_DIM if torch.cuda.is_available() else SMALL_DIM
-    style_image = image_to_tensor(f"{input_dir}/{args.style_img}", image_dimension).to(device).detach()
-    content_image = image_to_tensor(f"{input_dir}/{args.content_img}", image_dimension).to(device).detach()
+    (content_image, style_image) = images_to_tensor(
+        f"{input_dir}/{args.content_img}",
+        f"{input_dir}/{args.style_img}",
+        max_img_size
+    )
+
+    (content_image, style_image) = (
+        content_image.to(device).detach(), 
+        style_image.to(device).detach()
+    )
 
     # Get Input Tensor
     if args.init_mode == "content":

@@ -2,6 +2,7 @@ notebook/inputs/*
 notebook/config/*
 notebook/outputs/*
 
+python/data/inputs/*
 python/data/outputs/*
 
 __pycache__

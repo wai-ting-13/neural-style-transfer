@@ -1,12 +1,12 @@
 from PIL import Image
 
+from typing import Tuple, Union
+
 import torch
 import torch.nn as nn
 import torchvision
 
 from models.nst import NSTNetwork
-
-from utils.const import SMALL_DIM
 
 def prepare_model(
     device,
@@ -30,34 +30,44 @@ def prepare_model(
 
     return net
 
-def image_to_tensor(image_filepath : str, image_dimension : int = SMALL_DIM) -> torch.Tensor:
-    img = Image.open(image_filepath).convert('RGB')
+def images_to_tensor(
+    content_image_filepath : str, 
+    style_image_filepath : str,
+    max_img_size : Tuple[int, int]
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    
+    content_img = Image.open(content_image_filepath).convert('RGB')
+    style_img = Image.open(style_image_filepath).convert('RGB')
 
-    # Central-crop the image if it is not square
-    if img.height != img.width:
-        width, height = img.size
-        min_dim = min(width, height)
-        left = (width - min_dim) / 2
-        top = (height - min_dim) / 2
-        right = (width + min_dim) / 2
-        bottom = (height + min_dim) / 2
-        box = (left, top, right, bottom)
-        img = img.crop(box)
+    # Find desire size for images (scale-down)
+    (max_width, max_height) = max_img_size
+    (new_width, new_height) = content_img.size
 
-    # Scale-up image if it is too small
-    if img.height < image_dimension or img.width < image_dimension:
-      scaling_factor = image_dimension / max(img.size)
+    scaling_factor = 1
 
-      new_width = int(img.width * scaling_factor)
-      new_height = int(img.height * scaling_factor)
-
-      img = img.resize((new_width, new_height), Image.LANCZOS)
+    if content_img.width > max_width and content_img.height <= max_height:
+        scaling_factor = max_width / content_img.width
+    elif content_img.height > max_height and content_img.width <= max_width:
+        scaling_factor = max_height / content_img.height
+    elif content_img.height > max_height and content_img.width > max_width:
+        scaling_factor = min(
+          max_width / content_img.width,
+          max_height / content_img.height
+        )
+    
+    # Scale-down the images
+    (new_width, new_height) = (
+        int(content_img.width * scaling_factor), 
+        int(content_img.height * scaling_factor)
+    )
+    content_img = content_img.resize((new_width, new_height), Image.LANCZOS)
+    style_img = style_img.resize((new_width, new_height), Image.LANCZOS)
 
     torch_transformation = torchvision.transforms.Compose([
-        torchvision.transforms.Resize(image_dimension),
         torchvision.transforms.ToTensor()
     ])
 
-    img = torch_transformation(img).unsqueeze(0)
+    content_img = torch_transformation(content_img).unsqueeze(0)
+    style_img = torch_transformation(style_img).unsqueeze(0)
 
-    return img.to(torch.float)
+    return (content_img.to(torch.float), style_img.to(torch.float))
