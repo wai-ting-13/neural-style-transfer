@@ -109,7 +109,7 @@ if __name__ == "__main__":
     parser.add_argument("--style_weight", type=float, help="weight of style loss", default=1e5)
     parser.add_argument("--content_weight", type=float, help="weight of content loss", default=2)
 
-    parser.add_argument("--learning_rate", type=float, help="learning Rate", default=0.5)
+    parser.add_argument("--learning_rate", type=float, help="learning rate", default=0.5)
 
     parser.add_argument("--init_mode", type=str, choices=['random', 'content'], default='random')
     

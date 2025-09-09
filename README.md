@@ -22,11 +22,9 @@ A PyTorch implementation of [Gatys et al.(2016)'s idea](https://www.cv-foundatio
 ### Python
 ```python
 python3 python/style_transfer.py -h
-usage: style_transfer.py [-h] --content_img CONTENT_IMG --style_img STYLE_IMG
-                         [--use_gpu USE_GPU] [--style_weight STYLE_WEIGHT]
-                         [--content_weight CONTENT_WEIGHT]
-                         [--learning_rate LEARNING_RATE]
-                         [--init_mode {random,content}] [--num_epochs NUM_EPOCHS]
+usage: style_transfer.py [-h] --content_img CONTENT_IMG --style_img STYLE_IMG [--use_gpu | --no-use_gpu]
+                         [--style_weight STYLE_WEIGHT] [--content_weight CONTENT_WEIGHT]
+                         [--learning_rate LEARNING_RATE] [--init_mode {random,content}] [--num_epochs NUM_EPOCHS]
                          [--saving_freq SAVING_FREQ]
 
 options:
@@ -35,18 +33,20 @@ options:
                         content image filename under data/input
   --style_img STYLE_IMG
                         style image filename under data/input
-  --use_gpu USE_GPU     use GPU
+  --use_gpu, --no-use_gpu
+                        use GPU
   --style_weight STYLE_WEIGHT
                         weight of style loss
   --content_weight CONTENT_WEIGHT
                         weight of content loss
   --learning_rate LEARNING_RATE
-                        learning Rate
+                        learning rate
   --init_mode {random,content}
   --num_epochs NUM_EPOCHS
                         number of epochs the program run
   --saving_freq SAVING_FREQ
                         saving frequency of intermediate images
+
 ```
 
 **Setup conda environment:**
