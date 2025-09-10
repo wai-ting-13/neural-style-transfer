@@ -13,7 +13,7 @@
 
 A PyTorch implementation of [Gatys et al.(2016)'s idea](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf) with some code optimisation to reduce memory overhead. Also provide Jupyter Notebook for experiment in flexible. 
 
-**At this version we only suppport centre and square image for the output.**
+Added Support for non-square images.
 
 ## Packages
 - [environment.yml](./environment.yml) for conda
