@@ -1,6 +1,6 @@
 from PIL import Image
 
-from typing import Tuple, Union
+from typing import Tuple
 
 import torch
 import torch.nn as nn
