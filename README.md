@@ -68,7 +68,7 @@ conda env create -f environment.yml;
 conda activate nst;
 
 # Run the program
-python python/style_transfer.py --content_img data/input/content.jpg --style_img data/input/style.jpg --use_gpu
+python python/style_transfer.py --content_img content-1.jpg --style_img style-1.jpg --use_gpu
 
 # When you finish, exit the conda environment
 conda deactivate;
@@ -81,7 +81,7 @@ cd "${PATH_TO_REPO}";
 uv sync;
 
 # Run the program
-uv run python/style_transfer.py --content_img data/input/content.jpg --style_img data/input/style.jpg --use_gpu
+uv run python/style_transfer.py --content_img content-1.jpg --style_img style-1.jpg --use_gpu
 ```
 
 ### Google Colab - Setup with Google Drive
