@@ -16,7 +16,18 @@ A PyTorch implementation of [Gatys et al.(2016)'s idea](https://www.cv-foundatio
 Added Support for non-square images.
 
 ## Packages
-- [environment.yml](./environment.yml) for conda
+```YAML
+dependencies:
+  - python=3.12
+  - pytorch
+  - torchvision
+  - tqdm
+  - jupyter
+  - matplotlib
+```
+
+- [environment.yml](./environment.yml) for `conda`
+- [pyproject.toml](./pyproject.toml) for `uv`
 
 ## Usage
 ### Python
@@ -56,8 +67,21 @@ cd "${PATH_TO_REPO}";
 conda env create -f environment.yml;
 conda activate nst;
 
+# Run the program
+python python/style_transfer.py --content_img data/input/content.jpg --style_img data/input/style.jpg --use_gpu
+
 # When you finish, exit the conda environment
 conda deactivate;
+```
+
+**Setup uv environment:**
+```shell
+# Create uv env with config
+cd "${PATH_TO_REPO}";
+uv sync;
+
+# Run the program
+uv run python/style_transfer.py --content_img data/input/content.jpg --style_img data/input/style.jpg --use_gpu
 ```
 
 ### Google Colab - Setup with Google Drive
